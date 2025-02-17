@@ -8,6 +8,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::middleware('auth')->group(function () {
 	Route::get('/dashboard', [AppController::class, 'index'])->name('dashboard');
 	Route::get('/add', [AppController::class, 'add'])->name('add');

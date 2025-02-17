@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Laravel\Facades\OpenAI;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 class AppController extends Controller
 {
@@ -20,7 +21,7 @@ class AppController extends Controller
 			->simplePaginate(30);
 
 
-		return view('dashboard', ['data' => $data]);
+		return view('dashboard', ['meals' => $data]);
 	}
 
     public function add()
@@ -32,7 +33,7 @@ class AppController extends Controller
 	{
 		$request->validate([
 			'food_image' => 'required|file|mimes:jpeg,png,jpg,webp|max:8192',
-			'food_description' => 'string',
+			'food_description' => 'string|nullable',
 		]);
 
 		$file = $request->file('food_image');
@@ -52,19 +53,19 @@ class AppController extends Controller
 					(object) [
 						'role' => 'system',
 						'content' => [
-							(object)[
+							(object) [
 								'type' => 'text',
-								'text' => 'You are an expert nutritionist. Your job is to analyze the nutritional content of a meal based on the provided picture. The user may also provide a description, which you should factor in when analyzing the meal. If you do not recognize the image provided as food, Keep the `food_name` field as null and the rest as `0`. **Piš své odpovědi POUZE v češtině** 
+								'text' => 'You are an expert nutritionist. Your job is to analyze the nutritional content of a meal based on the provided picture. The user may also provide a description, which you should factor in when analyzing the meal. If you do not recognize the image provided as food, Keep the `food_name` field as null and the rest as `0`. **Piš své odpovědi POUZE v češtině**.   
 
-								Return the data as a JSON object with the following keys:
-								- `food_name`: string | Descriptive name of the meal. 
-								- `calories`: int |Estimated number of calories in the meal.
-								- `carbs`: int | Estimated number of carbs in the meal.
-								- `sugar` int |Estimated number of sugar in the meal.
-								- `protein` int |Estimated number of protein in the meal.
-								- `fat` int |Estimated number of fat in the meal.
-								- `fiber` int | Estimated number of fiber in the meal.
-								
+								Return the data as a JSON object with the following keys:  
+								- `food_name`: string | Descriptive name of the meal starting with a capital letter. 
+								- `calories`: int |Estimated number of calories in the meal.  
+								- `carbs`: int | Estimated number of carbs in the meal.  
+								- `sugar` int |Estimated number of sugar in the meal.  
+								- `protein` int |Estimated number of protein in the meal.  
+								- `fat` int |Estimated number of fat in the meal.  
+								- `fiber` int | Estimated number of fiber in the meal.  
+								  
 								If you are unsure of a value, leave it as empty.',
 							],
 						]
@@ -93,7 +94,7 @@ class AppController extends Controller
 				'presence_penalty' => 0
 			]);
 			$choices = $result->toArray();
-			$json = json_decode($choices['choices'][0]['message']['content']);
+			$json = json_decode($result->choices[0]->message->content);
 
 			NutritionData::create([
 				'user_id' 	=> Auth::user()->id,
@@ -116,6 +117,6 @@ class AppController extends Controller
 
 	public function settings()
 	{
-//		return view('settings');
+
 	}
 }
