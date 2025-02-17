@@ -10,6 +10,8 @@ class Settings extends Model
 
 	protected $hidden = ['openai_api_key'];
 
+	protected $guarded = [];
+
     public function user() : belongsTo
 	{
 		return $this->belongsTo(User::class);

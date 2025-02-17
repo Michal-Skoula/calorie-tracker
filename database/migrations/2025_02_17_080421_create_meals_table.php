@@ -15,13 +15,11 @@ return new class extends Migration
     {
         Schema::create('meals', function (Blueprint $table) {
             $table->id();
-			$table->foreignId(Day::class)->constrained()->cascadeOnDelete();
+			$table->foreignId('day_id')->constrained()->cascadeOnDelete();
 			$table->string('name');
 			$table->integer('calories');
-			$table->integer('carbs');
-			$table->integer('sugar');
 			$table->integer('protein');
-			$table->integer('fiber');
+			$table->integer('carbs');
 			$table->integer('fats');
             $table->timestamps();
         });

@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('logs', function (Blueprint $table) {
             $table->id();
 			$table->foreignId('user_id')->constrained()->cascadeOnDelete();
-			$table->integer('caloric_goal');
-			$table->integer('protein_goal');
-			$table->integer('carbs_goal')->nullable();
-			$table->integer('fats_goal')->nullable();
-			$table->string('openai_api_key');
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('logs');
     }
 };

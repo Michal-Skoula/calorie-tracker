@@ -7,12 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Meal extends Model
+class Log extends Model
 {
     use HasFactory;
 
-	public function days() : belongsTo
-	{
-		return $this->belongsTo(Day::class);
-	}
 }
