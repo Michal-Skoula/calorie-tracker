@@ -18,7 +18,7 @@ class DayResource extends Resource
 {
     protected static ?string $model = Day::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
     public static function form(Form $form): Form
     {
@@ -32,13 +32,14 @@ class DayResource extends Resource
                 Forms\Components\TextInput::make('calorie_goal')
                     ->required()
                     ->numeric()
-					->default(Auth::user()->settings()->first()->caloric_goal ?? 0),
+					->default(Auth::user()->settings()->first()->caloric_goal ?? 0)
+					->label('Daily calories goal'),
 				Forms\Components\Select::make('user_id')
 					->relationship('user', 'id', function (Builder $query) {
 						$query->find(Auth::id());
 					})
 					->default(Auth::id())
-//					->hidden()
+					->hidden()
 					->required(),
             ]);
     }

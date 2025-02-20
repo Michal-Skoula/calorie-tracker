@@ -1,5 +1,6 @@
 <?php
 
+use App\FoodType;
 use App\Models\Day;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -15,12 +16,18 @@ return new class extends Migration
     {
         Schema::create('meals', function (Blueprint $table) {
             $table->id();
-			$table->foreignId('day_id')->constrained()->cascadeOnDelete();
 			$table->string('name');
+			$table->string('image');
+			$table->text('description');
+			$table->text('prompt')->nullable();
+
+			$table->enum('type', (array)FoodType::class);
 			$table->integer('calories');
 			$table->integer('protein');
 			$table->integer('carbs');
 			$table->integer('fats');
+
+			$table->foreignId('day_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
