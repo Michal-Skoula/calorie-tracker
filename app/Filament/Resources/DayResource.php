@@ -2,10 +2,15 @@
 
 namespace App\Filament\Resources;
 
+use App\BulkingOrCuttingEnum;
 use App\Filament\Resources\DayResource\Pages;
 use App\Filament\Resources\DayResource\RelationManagers;
 use App\Models\Day;
+use App\Rules\ColumnIsUniqueBasedOnAnotherColumn;
 use Auth;
+use Carbon\Carbon;
+use Closure;
+use Doctrine\DBAL\Schema\Column;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +18,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
+use Illuminate\Validation\ValidationException;
 
 class DayResource extends Resource
 {
@@ -20,43 +29,66 @@ class DayResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
+
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-				Forms\Components\DatePicker::make('updated_at')
+		$settings = Auth::user()->settings()->first();
+
+		return $form
+			->schema([
+				Forms\Components\Hidden::make('user_id')
 					->required()
-					->label('Day')
-					->default(today())
-					->format('d.m.Y'),
-                Forms\Components\TextInput::make('calorie_goal')
-                    ->required()
-                    ->numeric()
-					->default(Auth::user()->settings()->first()->caloric_goal ?? 0)
-					->label('Daily calories goal'),
-				Forms\Components\Select::make('user_id')
-					->relationship('user', 'id', function (Builder $query) {
-						$query->find(Auth::id());
-					})
 					->default(Auth::id())
-					->hidden()
-					->required(),
-            ]);
-    }
+					->dehydrated(true),
+				Forms\Components\DatePicker::make('day')
+					->required()
+					->default(today())
+					->maxDate(today())
+					->rules([
+						fn (): Closure => function (string $attribute, $value, Closure $fail) {
+							$date_formatted = Carbon::make($value)->format('d.m.Y');
+							$isUnique = Auth::user()->days()->where(['day' => $date_formatted])->get();
+
+							if ($isUnique->isNotEmpty()) {
+								$fail("You've already made a record for this day.");
+							}
+						},
+					]),
+				Forms\Components\TextInput::make('weight')
+					->numeric()
+					->suffix('kg')
+					->nullable(),
+				Forms\Components\TextInput::make('calorie_goal')
+					->required()
+					->suffix('Kcal')
+					->numeric()
+					->default($settings->calorie_goal ?? 0),
+				Forms\Components\Select::make('bulking_or_cutting')
+					->required()
+					->options(BulkingOrCuttingEnum::class)
+					->default($settings->bulking_or_cutting ?? 'cutting'),
+			]);
+	}
 
     public static function table(Table $table): Table
     {
-        return $table
+		$settings = Auth::user()->settings()->first();
+
+		return $table
+			->defaultSort('day','desc')
             ->columns([
-				Tables\Columns\TextColumn::make('updated_at')
+				Tables\Columns\TextColumn::make('day')
 					->date('d.m.Y')
-					->label('Date'),
-                Tables\Columns\TextColumn::make('calorie_goal')
+					->sortable(),
+				Tables\Columns\ViewColumn::make('calories')
+					->counts('meals')
+					->view('filament.calories-column'),
+                Tables\Columns\TextColumn::make('weight')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('calories')
-                    ->numeric()
-                    ->sortable(),
+					->suffix(' kg'),
+				Tables\Columns\TextColumn::make('meals_count')
+					->numeric()
+					->counts('meals'),
             ])
             ->filters([
                 //
@@ -71,16 +103,8 @@ class DayResource extends Resource
             ]);
     }
 
-	/**
-	 * Override the default query so that the only accessible days and meals are from the current authenticated user
-	 *
-	 * @return Builder
-	 */
-	public static function getEloquentQuery(): Builder
-	{
-		$user_id = Auth::id();
-		return Day::query()->where('user_id', $user_id);
-	}
+
+
     public static function getRelations(): array
     {
         return [

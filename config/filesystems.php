@@ -36,6 +36,13 @@ return [
             'serve' => true,
             'throw' => false,
         ],
+		'meals' => [
+			'driver' => 'local',
+			'root' => storage_path('app/meals'),
+			'serve' => true,
+			'throw' => false,
+			'visibility' => 'public'
+		],
 
         'public' => [
             'driver' => 'local',

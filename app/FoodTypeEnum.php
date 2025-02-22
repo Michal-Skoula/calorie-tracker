@@ -5,7 +5,7 @@ namespace App;
 use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasLabel;
 
-enum FoodType: string implements HasLabel
+enum FoodTypeEnum: string implements HasLabel
 {
     case Breakfast =  'breakfast';
 	case Lunch = 'lunch';

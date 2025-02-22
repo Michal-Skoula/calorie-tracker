@@ -2,14 +2,25 @@
 
 namespace App\Models;
 
+use App\BulkingOrCuttingEnum;
+use App\Casts\WeightCast;
+use App\Models\Scopes\GetCurrentUserDaysOnlyScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ScopedBy(GetCurrentUserDaysOnlyScope::class)]
+
 class Day extends Model
 {
     use HasFactory;
+
+	protected $casts = [
+		'weight' => 'float',
+		'bulking_or_cutting' => BulkingOrCuttingEnum::class,
+	];
 
 	protected $guarded = [];
 
@@ -18,24 +29,8 @@ class Day extends Model
 		return $this->belongsTo(User::class);
 	}
 
-	public function meals() : hasMany
+	public function meals() : HasMany
 	{
 		return $this->hasMany(Meal::class);
-	}
-
-	public function calories() : int
-	{
-		$total_calories = 0;
-		$meals = $this->meals;
-
-		if(!$meals) {
-			return 0;
-		}
-
-		foreach($meals as $meal) {
-			$total_calories += $meal->calories;
-		}
-
-		return $total_calories;
 	}
 }
