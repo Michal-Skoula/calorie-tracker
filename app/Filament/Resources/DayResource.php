@@ -6,22 +6,14 @@ use App\BulkingOrCuttingEnum;
 use App\Filament\Resources\DayResource\Pages;
 use App\Filament\Resources\DayResource\RelationManagers;
 use App\Models\Day;
-use App\Rules\ColumnIsUniqueBasedOnAnotherColumn;
 use Auth;
 use Carbon\Carbon;
 use Closure;
-use Doctrine\DBAL\Schema\Column;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\UniqueConstraintViolationException;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Unique;
-use Illuminate\Validation\ValidationException;
 
 class DayResource extends Resource
 {
@@ -47,9 +39,9 @@ class DayResource extends Resource
 					->rules([
 						fn (): Closure => function (string $attribute, $value, Closure $fail) {
 							$date_formatted = Carbon::make($value)->format('d.m.Y');
-							$isUnique = Auth::user()->days()->where(['day' => $date_formatted])->get();
+							$day = Auth::user()->days()->where(['day' => $date_formatted])->get();
 
-							if ($isUnique->isNotEmpty()) {
+							if ($day->isNotEmpty()) {
 								$fail("You've already made a record for this day.");
 							}
 						},

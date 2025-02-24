@@ -16,6 +16,7 @@ class MealsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
+		$this->formType();
 //		if()
         return $form
             ->schema([
@@ -24,6 +25,10 @@ class MealsRelationManager extends RelationManager
                     ->maxLength(255),
             ]);
     }
+	protected function formType(): string
+	{
+//		dd(request()->routeIs('filament.resources.relation-manager.'));
+	}
 
     public function table(Table $table): Table
     {

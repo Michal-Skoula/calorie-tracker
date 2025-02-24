@@ -18,18 +18,20 @@ return new class extends Migration
             $table->id();
 			$table->foreignId('day_id')->constrained()->cascadeOnDelete();
 
-			$table->string('name');
 			$table->string('image');
-			$table->text('description');
 			$table->text('prompt')->nullable();
 
-			$table->enum('type', array_column(FoodTypeEnum::cases(), 'value'));
-			$table->integer('calories');
-			$table->integer('protein');
-			$table->integer('carbs');
-			$table->integer('fats');
+			$table->string('name')->nullable();
+			$table->text('description')->nullable();
 
-            $table->timestamps();
+			$table->integer('calories')->nullable();
+			$table->integer('protein')->nullable();
+			$table->integer('carbs')->nullable();
+			$table->integer('fats')->nullable();
+			$table->enum('type', FoodTypeEnum::valuesToArray())->default('unknown');
+
+
+			$table->timestamps();
         });
     }
 

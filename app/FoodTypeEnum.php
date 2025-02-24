@@ -7,12 +7,16 @@ use Filament\Support\Contracts\HasLabel;
 
 enum FoodTypeEnum: string implements HasLabel
 {
-    case Breakfast =  'breakfast';
+	case Breakfast = 'breakfast';
 	case Lunch = 'lunch';
 	case Dinner = 'dinner';
 	case Snack = 'snack';
 	case Unknown = 'unknown';
 
+	public static function valuesToArray(): array
+	{
+		return array_column(self::cases(),'value');
+	}
 	public function getLabel(): ?string
 	{
 		return $this->name;
