@@ -17,11 +17,12 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $user_id
+ * @property string $day
+ * @property float|null $weight
  * @property int $calorie_goal
- * @property int $calories
+ * @property \App\BulkingOrCuttingEnum $bulking_or_cutting
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Meal> $meals
  * @property-read int|null $meals_count
  * @property-read \App\Models\User $user
@@ -29,12 +30,14 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereBulkingOrCutting($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereCalorieGoal($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereCalories($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereDay($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Day whereWeight($value)
  */
 	class Day extends \Eloquent {}
 }
@@ -44,20 +47,19 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $name
- * @property string $image
- * @property string $description
- * @property string|null $prompt
- * @property \App\FoodTypeEnum $type
- * @property int $calories
- * @property int $protein
- * @property int $carbs
- * @property int $fats
  * @property int $day_id
+ * @property string $image
+ * @property string|null $prompt
+ * @property string|null $name
+ * @property string|null $description
+ * @property int|null $calories
+ * @property int|null $protein
+ * @property int|null $carbs
+ * @property int|null $fats
+ * @property \App\FoodTypeEnum $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Day $day
- * @property-read \App\Models\TFactory|null $use_factory
  * @method static \Database\Factories\MealFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Meal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Meal newQuery()
@@ -123,7 +125,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Day> $days
  * @property-read int|null $days_count
- * @property-read \App\Models\TFactory|null $use_factory
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \App\Models\Settings|null $settings

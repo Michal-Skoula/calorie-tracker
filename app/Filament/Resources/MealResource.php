@@ -39,8 +39,8 @@ class MealResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('day_id')
-                    ->numeric()
+                TextColumn::make('day.day')
+					->date()
                     ->sortable(),
                 TextColumn::make('name')
                     ->searchable(),
@@ -56,14 +56,6 @@ class MealResource extends Resource
                 TextColumn::make('fats')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -76,13 +68,6 @@ class MealResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-
-        ];
     }
 
     public static function getPages(): array

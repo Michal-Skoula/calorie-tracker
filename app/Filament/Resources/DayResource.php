@@ -38,7 +38,7 @@ class DayResource extends Resource
 					->maxDate(today())
 					->rules([
 						fn (): Closure => function (string $attribute, $value, Closure $fail) {
-							$date_formatted = Carbon::make($value)->format('d.m.Y');
+							$date_formatted = Carbon::make($value)->format('Y-m-d');
 							$day = Auth::user()->days()->where(['day' => $date_formatted])->get();
 
 							if ($day->isNotEmpty()) {
